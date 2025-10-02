@@ -4,8 +4,8 @@ import { AppDataSource } from './data-source';
 async function runMigrations() {
   try {
     // Initialize the data source
-      await AppDataSource.initialize();
-      console.log('Data source has been initialized');
+    await AppDataSource.initialize();
+    console.log('Data source has been initialized');
 
     // Run migrations
     const migrations = await AppDataSource.runMigrations();

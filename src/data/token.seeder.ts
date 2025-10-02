@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Token } from '../models/token.entity';
-import { validateToken } from '../models/token.schema';
+import { randomUUID } from 'crypto';
+import { Token } from '../models/token/token.entity';
+import { validateToken } from '../models/token/token.schema';
 
 @Injectable()
 export class TokenSeeder {
@@ -42,13 +43,13 @@ export class TokenSeeder {
         chain_Name: 'Ethereum',
         chain_IsEnabled: true,
         
-        logo_Id: this.generateUuid(),
-        logo_TokenId: this.generateUuid(),
+        logo_Id: randomUUID(),
+        logo_TokenId: randomUUID(),
         logo_BigRelativePath: '/images/eth_big.png',
         logo_SmallRelativePath: '/images/eth_small.png',
         logo_ThumbRelativePath: '/images/eth_thumb.png',
         
-        price: 300000,
+        price: '300000',
         lastPriceUpdate: new Date(),
       },
       {
@@ -68,13 +69,13 @@ export class TokenSeeder {
         chain_Name: 'Bitcoin',
         chain_IsEnabled: true,
         
-        logo_Id: this.generateUuid(),
-        logo_TokenId: this.generateUuid(),
+        logo_Id: randomUUID(),
+        logo_TokenId: randomUUID(),
         logo_BigRelativePath: '/images/btc_big.png',
         logo_SmallRelativePath: '/images/btc_small.png',
         logo_ThumbRelativePath: '/images/btc_thumb.png',
         
-        price: 4500000,
+        price: '4500000',
         lastPriceUpdate: new Date(),
       },
       {
@@ -94,13 +95,13 @@ export class TokenSeeder {
         chain_Name: 'Solana',
         chain_IsEnabled: true,
         
-        logo_Id: this.generateUuid(),
-        logo_TokenId: this.generateUuid(),
+        logo_Id: randomUUID(),
+        logo_TokenId: randomUUID(),
         logo_BigRelativePath: '/images/sol_big.png',
         logo_SmallRelativePath: '/images/sol_small.png',
         logo_ThumbRelativePath: '/images/sol_thumb.png',
         
-        price: 15000,
+        price: '15000',
         lastPriceUpdate: new Date(),
       },
     ];
@@ -115,13 +116,5 @@ export class TokenSeeder {
       this.logger.error('Failed to seed initial data', error.stack);
       throw error;
     }
-  }
-
-  private generateUuid(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
   }
 }

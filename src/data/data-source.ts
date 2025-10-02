@@ -1,16 +1,16 @@
 import { DataSource } from 'typeorm';
-import { Token } from '../models/token.entity';
-import { InitialMigration1684654321000 } from '../migrations/1684654321000-InitialMigration';
+import { Token } from '../models/token/token.entity';
+import * as path from 'path';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'postgres',
-  password: 'postgres',
-  database: 'tokens',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432', 10),
+  username: process.env.DB_USERNAME || 'postgres',
+  password: process.env.DB_PASSWORD || 'postgres',
+  database: process.env.DB_DATABASE || 'tokens',
   entities: [Token],
-  migrations: [InitialMigration1684654321000],
-  synchronize: false, // Set to false when using migrations
+  migrations: [path.join(__dirname, './migrations/*.ts')],
+  synchronize: false,
   logging: true,
 });

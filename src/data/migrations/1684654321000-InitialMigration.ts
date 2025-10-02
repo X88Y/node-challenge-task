@@ -5,7 +5,7 @@ export class InitialMigration1684654321000 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            CREATE TABLE "tokens" (
+            CREATE TABLE IF NOT EXISTS "tokens" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "address" bytea NOT NULL,
                 "symbol" character varying,

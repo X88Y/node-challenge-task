@@ -27,7 +27,7 @@ export const tokenSchema = z.object({
   logo_SmallRelativePath: z.string(),
   logo_ThumbRelativePath: z.string(),
   
-  price: z.number().nonnegative().default(0),
+  price: z.string().min(1).default('0'),
   lastPriceUpdate: z.date().default(() => new Date())
 });
 

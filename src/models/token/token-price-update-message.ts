@@ -4,8 +4,8 @@ import { z } from 'zod';
 export const tokenPriceUpdateMessageSchema = z.object({
   tokenId: z.string().uuid(),
   symbol: z.string().min(1),
-  oldPrice: z.number().nonnegative(),
-  newPrice: z.number().nonnegative(),
+  oldPrice: z.string().min(1),
+  newPrice: z.string().min(1),
   timestamp: z.date()
 });
 
@@ -16,8 +16,8 @@ export type TokenPriceUpdateMessage = z.infer<typeof tokenPriceUpdateMessageSche
 export function createTokenPriceUpdateMessage(data: {
   tokenId: string;
   symbol: string;
-  oldPrice: number;
-  newPrice: number;
+  oldPrice: string;
+  newPrice: string;
   timestamp?: Date;
 }): TokenPriceUpdateMessage {
   return tokenPriceUpdateMessageSchema.parse({

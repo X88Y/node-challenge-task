@@ -1,28 +1,37 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { Token } from './models/token.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { Token } from './models/token/token.entity';
 import { TokenPriceUpdateService } from './services/token-price-update.service';
 import { MockPriceService } from './services/mock-price.service';
 import { KafkaProducerService } from './kafka/kafka-producer.service';
-import { TokenSeeder } from './data/token.seeder';
+import { envValidationSchema } from './config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env.local', '.env'],
+      validationSchema: envValidationSchema,
+      validationOptions: {
+        abortEarly: false, // Show all validation errors at once
+        allowUnknown: true, // Allow unknown keys for flexibility
+      },
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'tokens',
-      entities: [Token],
-      migrations: [__dirname + '/migrations/*.{js,ts}'],
-      migrationsRun: true, // Run migrations automatically
-      synchronize: false, // Disabled when using migrations
+    ScheduleModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST', 'localhost'),
+        port: configService.get<number>('DB_PORT', 5432),
+        username: configService.get<string>('DB_USERNAME', 'postgres'),
+        password: configService.get<string>('DB_PASSWORD', 'postgres'),
+        database: configService.get<string>('DB_DATABASE', 'tokens'),
+        entities: [Token],
+        synchronize: false, // Disabled when using migrations
+       }),
     }),
     TypeOrmModule.forFeature([Token]),
   ],
@@ -31,24 +40,6 @@ import { TokenSeeder } from './data/token.seeder';
     TokenPriceUpdateService,
     MockPriceService,
     KafkaProducerService,
-    TokenSeeder,
   ],
 })
-export class AppModule implements OnModuleInit {
-  constructor(
-    private readonly tokenSeeder: TokenSeeder,
-    private readonly tokenPriceUpdateService: TokenPriceUpdateService,
-  ) {}
-
-  async onModuleInit() {
-    try {
-      // Seed initial data
-      await this.tokenSeeder.seed();
-      
-      // Start price update service
-      this.tokenPriceUpdateService.start();
-    } catch (error) {
-      console.error('Failed to initialize application:', error);
-    }
-  }
-}
+export class AppModule {}

@@ -64,8 +64,8 @@ export class Token {
   @Column({ name: 'logo_thumbrelativepath' })
   logo_ThumbRelativePath: string;
 
-  @Column({ type: 'decimal', precision: 28, scale: 0, default: 0 })
-  price: number;
+  @Column({ type: 'decimal', precision: 28, scale: 18, default: 0 })
+  price: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   lastPriceUpdate: Date;
